@@ -93,6 +93,10 @@ The goal is simple:
 
 # Installation
 
+Deploy on safepic.vercel.app 
+
+- or -
+
 ```bash
 git clone https://github.com/yourusername/safepic.git
 cd safepic
