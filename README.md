@@ -41,6 +41,7 @@ AI background removal and encryption both happen directly in the browser.
 - Rotate / flip
 - Undo / redo
 - Zoom controls
+- Redact
 
 ## Filters & Adjustments
 - Brightness
