@@ -1,7 +1,7 @@
 {
   "name": "SafePic",
   "short_name": "SafePic",
-  "description": "Private, in-browser image editor with on-device AI and post-quantum encryption.",
+  "description": "Private, in-browser image editor with on-device AI and quantum-resistant encryption.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#15171c",

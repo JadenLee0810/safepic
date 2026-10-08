@@ -12,7 +12,7 @@ function layout(f) {
   let o = 0;
   const segs = [];
   const add = (group, n) => { segs.push({ group, start: o, len: n }); o += n; };
-  add('head', 4 + 1 + 16);             // magic, version, salt
+  add('head', 4 + 1 + (f[4] >= 2 ? 3 : 0) + 16); // magic, version, [scrypt params], salt
   add('key', 12 + 16);                 // wrap iv + tag
   const skLen = v.getUint32(o, true);
   add('key', 4 + skLen);               // length + wrapped secret key
@@ -25,7 +25,7 @@ function layout(f) {
 }
 
 const GROUPS = {
-  head: 'Header and scrypt salt',
+  head: 'Header, scrypt settings and salt',
   key: 'Password-locked ML-KEM private key',
   kem: 'ML-KEM-768 ciphertext',
   img: 'AES-256-GCM encrypted image',
@@ -83,7 +83,6 @@ runBtn.addEventListener('click', async () => {
   runBtn.textContent = 'Encrypting…';
   try {
     sample ??= await sampleImage();
-    await new Promise((r) => setTimeout(r, 20)); // let the button repaint before scrypt blocks
     const t0 = performance.now();
     encrypted = await encryptImage(sample, pass);
     render(encrypted, performance.now() - t0);

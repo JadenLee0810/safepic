@@ -1,7 +1,7 @@
 {
   "name": "safepic-web",
   "version": "1.0.0",
-  "description": "SafePic — local image editor with AI background removal and post-quantum encryption. Web edition.",
+  "description": "SafePic — local image editor with AI background removal and quantum-resistant encryption. Web edition.",
   "type": "module",
   "scripts": {
     "start": "vite",

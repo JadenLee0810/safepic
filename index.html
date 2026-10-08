@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SafePics</title>
-  <meta name="description" content="Free, private image editor that runs entirely in your browser. Remove backgrounds with on-device AI, redact sensitive info, compress, and encrypt photos with post-quantum ML-KEM-768. No uploads, no account.">
+  <meta name="description" content="Free, private image editor that runs entirely in your browser. Remove backgrounds with on-device AI, redact sensitive info, compress, and encrypt photos with quantum-resistant encryption. No uploads, no account.">
   <link rel="canonical" href="https://safepics.us/">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#15171c">
@@ -18,14 +18,14 @@
   <meta property="og:site_name" content="SafePic">
   <meta property="og:url" content="https://safepics.us/">
   <meta property="og:title" content="SafePic: Edit your photos. Keep them yours.">
-  <meta property="og:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and post-quantum encryption. Nothing is ever uploaded.">
+  <meta property="og:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and quantum-resistant encryption. Nothing is ever uploaded.">
   <meta property="og:image" content="https://safepics.us/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="SafePic: private, in-browser image editor">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SafePic: Edit your photos. Keep them yours.">
-  <meta name="twitter:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and post-quantum encryption.">
+  <meta name="twitter:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and quantum-resistant encryption.">
   <meta name="twitter:image" content="https://safepics.us/og-image.png">
 
   <script type="application/ld+json">
@@ -43,7 +43,7 @@
         "@type": "WebApplication",
         "name": "SafePic",
         "url": "https://safepics.us/",
-        "description": "Private, in-browser image editor with on-device AI background removal, redaction, compression, and post-quantum (ML-KEM-768) image encryption.",
+        "description": "Private, in-browser image editor with on-device AI background removal, redaction, compression, and quantum-resistant password encryption (scrypt, AES-256-GCM, ML-KEM-768).",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any (web browser)",
         "browserRequirements": "Requires a modern browser with JavaScript and WebAssembly",
@@ -51,7 +51,7 @@
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "featureList": [
           "AI background removal that runs on your device",
-          "Post-quantum image encryption (ML-KEM-768 + AES-256-GCM)",
+          "Quantum-resistant password encryption (scrypt + AES-256-GCM, ML-KEM-768)",
           "Redaction tool",
           "Draw, text, crop, rotate, flip and resize",
           "Brightness, contrast, saturation, hue and filters",
@@ -198,9 +198,9 @@
               <p>Black out names, addresses and account numbers before you share a screenshot. Boxes are flattened into the pixels on export, so they can't be peeled off.</p>
             </article>
             <article>
-              <span class="lp-label">Post-quantum</span>
+              <span class="lp-label">Quantum-resistant</span>
               <h3>Encrypted .enc files</h3>
-              <p>Lock any image behind a password with ML-KEM-768 and AES-256-GCM. Open it again later, here, on any device.</p>
+              <p>Lock any image behind a password. scrypt and AES-256-GCM hold up against known quantum attacks, and every file gets its own ML-KEM-768 key pair.</p>
             </article>
             <article>
               <span class="lp-label">Editing</span>
@@ -228,6 +228,7 @@
             <span class="lp-label">02 / Encryption</span>
             <h2>Look inside a .enc file.</h2>
             <p>This demo runs the same code the editor uses, right here in your browser. It encrypts a small sample image with your password and shows the file it produces.</p>
+            <p class="lp-split-note">Your password is the key: it's stretched with scrypt (N&nbsp;=&nbsp;2<sup>17</sup>, 128&nbsp;MiB of memory per guess) to make guessing expensive, and it's never stored or sent anywhere. A lost password can't be recovered, so pick a strong one.</p>
           </div>
           <div class="lp-demo">
             <div class="lp-demo-row">
@@ -275,7 +276,7 @@
                 <tr><td>Account required</td><td>Often</td><td class="lp-yes">No</td></tr>
                 <tr><td>AI background removal</td><td>Cloud API</td><td class="lp-yes">On your device</td></tr>
                 <tr><td>Works offline</td><td>No</td><td class="lp-yes">After first load</td></tr>
-                <tr><td>Password encryption</td><td>Rare</td><td class="lp-yes">ML-KEM-768 + AES-256-GCM</td></tr>
+                <tr><td>Password encryption</td><td>Rare</td><td class="lp-yes">scrypt + AES-256-GCM</td></tr>
                 <tr><td>Source code</td><td>Closed</td><td class="lp-yes">Open, MIT</td></tr>
               </tbody>
             </table>

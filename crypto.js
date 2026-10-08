@@ -1,19 +1,39 @@
 // SafePic web crypto — pure browser, no Node APIs.
-// Same .enc file format as the desktop build (PQIE v1).
+//
+// .enc file format (PQIE). Writes v2; reads v1 and v2.
+//   v1: "PQIE" | 0x01 | salt[16] | wrap | kem_ct | data          (scrypt N=2^15, r=8, p=1)
+//   v2: "PQIE" | 0x02 | logN | r | p | salt[16] | wrap | kem_ct | data
+// where wrap = iv[12] | tag[16] | u32le len | ct   (ML-KEM secret key under the password key)
+//       data = iv[12] | tag[16] | u32le len | ct   (image under SHA-256 of the KEM shared secret)
+//
+// Security note: the password is what protects a file. scrypt + AES-256-GCM
+// are quantum-resistant on their own; the per-file ML-KEM-768 key pair keeps
+// the format ready for public-key sharing.
 
-import { scrypt } from '@noble/hashes/scrypt';
+import { scryptAsync } from '@noble/hashes/scrypt';
 import { sha256 } from '@noble/hashes/sha256';
 import { ml_kem768 } from '@noble/post-quantum/ml-kem.js';
 
 const MAGIC_BYTES = new TextEncoder().encode('PQIE'); // [0x50, 0x51, 0x49, 0x45]
-const VERSION = 1;
+const VERSION = 2;
+
+// scrypt cost for new files (OWASP minimum: N=2^17, r=8, p=1 → 128 MiB).
+const KDF = { logN: 17, r: 8, p: 1 };
+const V1_KDF = { logN: 15, r: 8, p: 1 };
 
 // --- KDF -----------------------------------------------------------
-function kdf(password, salt) {
+function checkKdf({ logN, r, p }) {
+  // Bounds stop a crafted file from demanding gigabytes of memory or
+  // minutes of CPU when someone tries to open it.
+  if (logN < 14 || logN > 20 || r < 1 || r > 16 || p < 1 || p > 4) {
+    throw new Error('Unsupported encryption parameters');
+  }
+}
+function kdf(password, salt, { logN, r, p }) {
   const pwBytes = typeof password === 'string'
     ? new TextEncoder().encode(password)
     : password;
-  return scrypt(pwBytes, salt, { N: 1 << 15, r: 8, p: 1, dkLen: 32 });
+  return scryptAsync(pwBytes, salt, { N: 2 ** logN, r, p, dkLen: 32 });
 }
 
 // --- AES-GCM via WebCrypto -----------------------------------------
@@ -76,7 +96,7 @@ function bytesEqual(a, b) {
 // --- Public API ---------------------------------------------------
 export async function encryptImage(imageBytes, password) {
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const kdfKey = kdf(password, salt);
+  const kdfKey = await kdf(password, salt, KDF);
 
   const { publicKey, secretKey } = ml_kem768.keygen();
   const { cipherText: kemCt, sharedSecret } = ml_kem768.encapsulate(publicKey);
@@ -87,7 +107,7 @@ export async function encryptImage(imageBytes, password) {
 
   return concatBytes(
     MAGIC_BYTES,
-    new Uint8Array([VERSION]),
+    new Uint8Array([VERSION, KDF.logN, KDF.r, KDF.p]),
     salt,
     wrap.iv, wrap.tag, u32leToBytes(wrap.ct.length), wrap.ct,
     u32leToBytes(kemCt.length), kemCt,
@@ -98,12 +118,24 @@ export async function encryptImage(imageBytes, password) {
 export async function decryptImage(fileBytes, password) {
   const f = fileBytes instanceof Uint8Array ? fileBytes : new Uint8Array(fileBytes);
   let o = 0;
-  const read = (n) => { const s = f.slice(o, o + n); o += n; return s; };
+  const read = (n) => {
+    if (o + n > f.length) throw new Error('File is truncated or corrupt');
+    const s = f.slice(o, o + n); o += n; return s;
+  };
   const u32 = () => { const v = readU32le(f, o); o += 4; return v; };
 
-  if (!bytesEqual(read(4), MAGIC_BYTES)) throw new Error('Not a PQIE file');
+  if (f.length < 5 || !bytesEqual(read(4), MAGIC_BYTES)) throw new Error('Not a PQIE file');
   const version = read(1)[0];
-  if (version !== VERSION) throw new Error('Unsupported file version');
+  let params;
+  if (version === 1) {
+    params = V1_KDF;
+  } else if (version === 2) {
+    const [logN, r, p] = read(3);
+    params = { logN, r, p };
+    checkKdf(params);
+  } else {
+    throw new Error('Unsupported file version');
+  }
 
   const salt = read(16);
   const wrapIv = read(12), wrapTag = read(16);
@@ -112,7 +144,7 @@ export async function decryptImage(fileBytes, password) {
   const dataIv = read(12), dataTag = read(16);
   const dataCt = read(u32());
 
-  const kdfKey = kdf(password, salt);
+  const kdfKey = await kdf(password, salt, params);
   let sk;
   try {
     sk = await aesDecrypt(kdfKey, wrapIv, wrapTag, wrappedSk);
