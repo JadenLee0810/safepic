@@ -1,48 +1,308 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SafePic</title>
+  <title>SafePics</title>
+  <meta name="description" content="Free, private image editor that runs entirely in your browser. Remove backgrounds with on-device AI, redact sensitive info, compress, and encrypt photos with post-quantum ML-KEM-768. No uploads, no account.">
+  <link rel="canonical" href="https://safepics.us/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#15171c">
+
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SafePic">
+  <meta property="og:url" content="https://safepics.us/">
+  <meta property="og:title" content="SafePic: Edit your photos. Keep them yours.">
+  <meta property="og:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and post-quantum encryption. Nothing is ever uploaded.">
+  <meta property="og:image" content="https://safepics.us/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SafePic: private, in-browser image editor">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SafePic: Edit your photos. Keep them yours.">
+  <meta name="twitter:description" content="A private image editor that runs in your browser. On-device AI background removal, redaction, and post-quantum encryption.">
+  <meta name="twitter:image" content="https://safepics.us/og-image.png">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://safepics.us/#website",
+        "name": "SafePic",
+        "alternateName": "SafePics",
+        "url": "https://safepics.us/"
+      },
+      {
+        "@type": "WebApplication",
+        "name": "SafePic",
+        "url": "https://safepics.us/",
+        "description": "Private, in-browser image editor with on-device AI background removal, redaction, compression, and post-quantum (ML-KEM-768) image encryption.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires a modern browser with JavaScript and WebAssembly",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "featureList": [
+          "AI background removal that runs on your device",
+          "Post-quantum image encryption (ML-KEM-768 + AES-256-GCM)",
+          "Redaction tool",
+          "Draw, text, crop, rotate, flip and resize",
+          "Brightness, contrast, saturation, hue and filters",
+          "PNG, JPG and WebP compression with size preview"
+        ],
+        "image": "https://safepics.us/og-image.png",
+        "license": "https://opensource.org/licenses/MIT",
+        "sameAs": ["https://github.com/JadenLee0810/safepic"]
+      }
+    ]
+  }
+  </script>
+
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body data-theme="dark-gold">
   <div id="landing">
-    <div id="landing-inner">
-      <div id="landing-logo">
-        <svg width="72" height="72" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="64" height="64" rx="14" fill="var(--panel-2)"/>
-          <path d="M22 18 L26 14 L38 14 L42 18" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-          <rect x="8" y="18" width="48" height="34" rx="4" stroke="var(--accent)" stroke-width="2.5" fill="none"/>
-          <circle cx="48" cy="24" r="1.8" fill="var(--accent)"/>
-          <circle cx="32" cy="36" r="11" stroke="var(--accent)" stroke-width="1.5" fill="none" opacity="0.35"/>
-          <path d="M27 34 V31 a5 5 0 0 1 10 0 V34" stroke="var(--accent)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-          <rect x="25" y="34" width="14" height="10" rx="2" fill="var(--accent)"/>
-          <circle cx="32" cy="38.5" r="1.3" fill="var(--panel-2)"/>
-          <path d="M31.3 38.5 L30.8 42 L33.2 42 L32.7 38.5 Z" fill="var(--panel-2)"/>
-        </svg>
+    <header class="lp-nav">
+      <div class="lp-wrap lp-nav-inner">
+        <a class="lp-brand" href="#top">
+          <svg width="22" height="20" viewBox="4 6 56 50" fill="none" aria-hidden="true">
+            <path d="M22 18 L26 14 L38 14 L42 18" stroke="currentColor" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+            <rect x="8" y="18" width="48" height="34" rx="4" stroke="currentColor" stroke-width="4"/>
+            <path d="M27 34 V31 a5 5 0 0 1 10 0 V34" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+            <rect x="25" y="34" width="14" height="10" rx="2" fill="currentColor"/>
+          </svg>
+          SafePic
+        </a>
+        <div class="lp-nav-end">
+          <div class="lp-theme-wrap">
+            <button id="land-theme" class="lp-btn lp-btn-sm lp-theme-btn" title="Change theme" aria-haspopup="true" aria-expanded="false">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"/>
+                <circle cx="7.5" cy="10" r="1" fill="currentColor"/>
+                <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                <circle cx="16.5" cy="10" r="1" fill="currentColor"/>
+                <circle cx="14.5" cy="14.5" r="1" fill="currentColor"/>
+              </svg>
+              Theme
+            </button>
+            <div id="land-theme-menu" class="popover lp-theme-menu hidden">
+              <div class="theme-option" data-theme="dark-gold">
+                <div class="theme-swatch" style="background: linear-gradient(135deg, #15171c 50%, #f0c350 50%);"></div>
+                <span>Dark Gold</span>
+              </div>
+              <div class="theme-option" data-theme="light">
+                <div class="theme-swatch" style="background: linear-gradient(135deg, #f5f5f7 50%, #c8a000 50%); border:1px solid #d8d8dc;"></div>
+                <span>Light</span>
+              </div>
+              <div class="theme-option" data-theme="cyberpunk">
+                <div class="theme-swatch" style="background: linear-gradient(135deg, #0a0014 50%, #ff00ff 50%);"></div>
+                <span>Cyberpunk</span>
+              </div>
+              <div class="theme-option" data-theme="forest">
+                <div class="theme-swatch" style="background: linear-gradient(135deg, #1a2820 50%, #7fc97f 50%);"></div>
+                <span>Forest</span>
+              </div>
+            </div>
+          </div>
+          <button id="land-launch" class="lp-btn lp-btn-primary lp-btn-sm">Start</button>
+        </div>
       </div>
-      <h1 id="landing-title">SafePic</h1>
-      <p id="landing-sub">Local &nbsp;·&nbsp; Private &nbsp;·&nbsp; Post-Quantum</p>
-      <div id="landing-actions">
-        <button id="land-open" class="primary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-          Open Image
-        </button>
-        <button id="land-open-enc">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          Open Encrypted
-        </button>
-        <button id="land-new">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          New Canvas
-        </button>
+    </header>
+
+    <main id="top">
+      <!-- Hero -->
+      <section class="lp-hero">
+        <div class="lp-wrap">
+          <div class="lp-hero-copy">
+            <h1>The <span class="lp-nowrap">cybersecurity-first</span> image editing platform.</h1>
+            <div class="lp-hero-side">
+              <p class="lp-lead">Redact, crop, remove backgrounds and encrypt images in the browser. There is no server to upload to, so nothing ever leaves your machine.</p>
+              <div class="lp-actions">
+                <button id="land-open" class="lp-btn lp-btn-primary">Open an image</button>
+                <button id="land-open-enc" class="lp-btn">Decrypt .enc</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product mock: a real-looking editor session, animated -->
+          <div id="land-drop" class="lp-shot" role="button" tabindex="0" aria-label="Drop an image here or click to open one">
+            <div class="lp-shot-top">
+              <span class="lp-shot-brand">SafePic</span>
+              <span class="lp-shot-btn">Open</span><span class="lp-shot-btn">Save</span><span class="lp-shot-btn">Compress</span><span class="lp-shot-btn lp-shot-enc">Encrypt</span>
+              <span class="lp-shot-sep"></span>
+              <span class="lp-shot-btn">Undo</span><span class="lp-shot-btn">Redo</span>
+              <span class="lp-shot-file">statement-march.png · 1240 × 1754</span>
+            </div>
+            <div class="lp-shot-body">
+              <div class="lp-shot-rail">
+                <i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i>
+              </div>
+              <div class="lp-shot-stage">
+                <div class="lp-doc">
+                  <div class="lp-doc-head">
+                    <div><b>Northbank</b><small>Monthly statement · March 2026</small></div>
+                    <div class="lp-doc-logo"></div>
+                  </div>
+                  <div class="lp-doc-grid">
+                    <span>Account holder</span><span class="lp-r lp-r1">Jordan A. Ellery</span>
+                    <span>Address</span><span class="lp-r lp-r2">214 Hollis Street, Apt 6B</span>
+                    <span>Account no.</span><span class="lp-r lp-r3">4402 1937 5520 0918</span>
+                    <span>Routing</span><span class="lp-r lp-r4">021 000 089</span>
+                  </div>
+                  <table class="lp-doc-tx">
+                    <tr><td>03/02</td><td>Payroll deposit</td><td>+3,214.00</td></tr>
+                    <tr><td>03/04</td><td>Rent · Hollis Mgmt</td><td>−1,850.00</td></tr>
+                    <tr><td>03/09</td><td>Grocery</td><td>−86.42</td></tr>
+                    <tr><td>03/15</td><td>Transfer to savings</td><td>−400.00</td></tr>
+                    <tr><td>03/21</td><td>Utilities</td><td>−112.10</td></tr>
+                  </table>
+                </div>
+                <div class="lp-toast"><span class="lp-toast-dot"></span>Saved <b>statement-march.enc</b> · ML-KEM-768 + AES-256-GCM</div>
+              </div>
+              <div class="lp-shot-panel">
+                <div class="lp-shot-sec">Tool options</div>
+                <div class="lp-shot-sec">Adjustments</div>
+                <div class="lp-shot-sec">Filters</div>
+                <div class="lp-shot-sec">Remove background</div>
+                <div class="lp-shot-hint">Redact: drag over anything you don't want shared.</div>
+              </div>
+            </div>
+          </div>
+          <p class="lp-shot-caption">Drop an image anywhere on this page to open it, or <button id="land-new" class="lp-inline">start with a blank canvas</button>.</p>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="lp-section">
+        <div class="lp-wrap lp-split">
+          <div class="lp-split-head">
+            <span class="lp-label">01 / Features</span>
+            <h2>A complete editor, minus the cloud.</h2>
+          </div>
+          <div class="lp-feat">
+            <article>
+              <span class="lp-label">On-device AI</span>
+              <h3>Background removal</h3>
+              <p>An ONNX segmentation model runs locally with WebAssembly. The first run downloads about 40&nbsp;MB of model files; after that it's cached and works offline.</p>
+            </article>
+            <article>
+              <span class="lp-label">Privacy</span>
+              <h3>Redaction</h3>
+              <p>Black out names, addresses and account numbers before you share a screenshot. Boxes are flattened into the pixels on export, so they can't be peeled off.</p>
+            </article>
+            <article>
+              <span class="lp-label">Post-quantum</span>
+              <h3>Encrypted .enc files</h3>
+              <p>Lock any image behind a password with ML-KEM-768 and AES-256-GCM. Open it again later, here, on any device.</p>
+            </article>
+            <article>
+              <span class="lp-label">Editing</span>
+              <h3>Draw, text, crop, transform</h3>
+              <p>Brush, eraser, fill, text, crop, rotate, flip and resize, with full undo and redo history.</p>
+            </article>
+            <article>
+              <span class="lp-label">Color</span>
+              <h3>Adjustments &amp; filters</h3>
+              <p>Brightness, contrast, saturation and hue, plus eight filters. Adjustment totals are tracked as you work.</p>
+            </article>
+            <article>
+              <span class="lp-label">Export</span>
+              <h3>Compression with a size preview</h3>
+              <p>Export PNG, JPG or WebP and see the exact output size as you move the quality slider.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Encryption: live demo using the app's real crypto -->
+      <section id="encryption" class="lp-section">
+        <div class="lp-wrap lp-split">
+          <div class="lp-split-head">
+            <span class="lp-label">02 / Encryption</span>
+            <h2>Look inside a .enc file.</h2>
+            <p>This demo runs the same code the editor uses, right here in your browser. It encrypts a small sample image with your password and shows the file it produces.</p>
+          </div>
+          <div class="lp-demo">
+            <div class="lp-demo-row">
+              <label class="lp-field">
+                <span>Password</span>
+                <input id="demo-pass" type="text" value="correct horse battery staple" spellcheck="false" autocomplete="off">
+              </label>
+              <button id="demo-run" class="lp-btn lp-btn-primary">Encrypt sample</button>
+            </div>
+
+            <div id="demo-out" class="lp-demo-out" hidden>
+              <div class="lp-demo-meta">
+                <span id="demo-size"></span>
+                <span id="demo-time"></span>
+              </div>
+              <div id="demo-bar" class="lp-bar"></div>
+              <ul id="demo-legend" class="lp-legend"></ul>
+              <pre id="demo-hex" class="lp-hex"></pre>
+              <div class="lp-demo-row">
+                <label class="lp-field">
+                  <span>Decrypt with</span>
+                  <input id="demo-pass2" type="text" placeholder="Type the password" spellcheck="false" autocomplete="off">
+                </label>
+                <button id="demo-dec" class="lp-btn">Decrypt</button>
+              </div>
+              <p id="demo-result" class="lp-demo-result"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparison -->
+      <section id="compare" class="lp-section">
+        <div class="lp-wrap lp-split">
+          <div class="lp-split-head">
+            <span class="lp-label">03 / Compare</span>
+            <h2>Where your image goes.</h2>
+            <p>Most online editors process your photo on their servers. SafePic doesn't have servers to process it on.</p>
+          </div>
+          <div class="lp-table-wrap">
+            <table class="lp-table">
+              <thead><tr><th></th><th>Typical online editor</th><th>SafePic</th></tr></thead>
+              <tbody>
+                <tr><td>Image is uploaded</td><td>Yes</td><td class="lp-yes">Never</td></tr>
+                <tr><td>Account required</td><td>Often</td><td class="lp-yes">No</td></tr>
+                <tr><td>AI background removal</td><td>Cloud API</td><td class="lp-yes">On your device</td></tr>
+                <tr><td>Works offline</td><td>No</td><td class="lp-yes">After first load</td></tr>
+                <tr><td>Password encryption</td><td>Rare</td><td class="lp-yes">ML-KEM-768 + AES-256-GCM</td></tr>
+                <tr><td>Source code</td><td>Closed</td><td class="lp-yes">Open, MIT</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-end">
+        <div class="lp-wrap lp-end-inner">
+          <h2>Open an image. It stays with you.</h2>
+          <button id="land-final" class="lp-btn lp-btn-primary">Open an image</button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="lp-footer">
+      <div class="lp-wrap lp-footer-inner">
+        <span>SafePic · MIT license</span>
+        <a href="https://github.com/JadenLee0810/safepic" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
-      <p id="landing-hint">or drop an image anywhere</p>
-    </div>
+    </footer>
+
+    <div class="lp-drag-overlay">Drop to open in SafePic</div>
   </div>
 
-  <div id="app">
+  <!-- Editor UI: keep its labels out of search snippets -->
+  <div id="app" data-nosnippet>
     <div id="topbar">
       <div class="brand">SafePic</div>
 

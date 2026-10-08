@@ -1,4 +1,7 @@
 import { encryptImage, decryptImage } from './crypto.js';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import './landing.js';
 
 /* ---------------- DOM ---------------- */
 const canvas = document.getElementById('canvas');
@@ -173,6 +176,9 @@ document.getElementById('zoom-out').addEventListener('click', () => setZoom(zoom
 document.getElementById('zoom-level').addEventListener('click', () => setZoom(1));
 document.getElementById('zoom-fit').addEventListener('click', fitZoom);
 
+// Size the stage to the initial canvas so it centers before any image is loaded.
+applyZoom();
+
 center.addEventListener('wheel', (e) => {
   if (!(e.ctrlKey || e.metaKey)) return;
   e.preventDefault();
@@ -244,12 +250,45 @@ document.querySelectorAll('.theme-option').forEach(opt => {
 });
 document.addEventListener('click', () => { themePopover.classList.add('hidden'); });
 
+// Landing page theme menu. Its .theme-option items already get applyTheme
+// from the loop above; this just opens/closes the menu.
+const landThemeBtn = document.getElementById('land-theme');
+const landThemeMenu = document.getElementById('land-theme-menu');
+function setLandThemeMenu(open) {
+  landThemeMenu.classList.toggle('hidden', !open);
+  landThemeBtn.setAttribute('aria-expanded', String(open));
+  landThemeMenu.querySelectorAll('.theme-option').forEach(o =>
+    o.classList.toggle('active', o.dataset.theme === document.body.dataset.theme));
+}
+landThemeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  setLandThemeMenu(landThemeMenu.classList.contains('hidden'));
+});
+landThemeMenu.querySelectorAll('.theme-option').forEach(o =>
+  o.addEventListener('click', () => setLandThemeMenu(false)));
+document.addEventListener('click', () => setLandThemeMenu(false));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setLandThemeMenu(false); });
+
 /* ---------------- Landing screen ---- */
 function hideLanding() { landing.classList.add('hidden'); }
 
 document.getElementById('land-open').addEventListener('click', () => { hideLanding(); openFile(); });
 document.getElementById('land-open-enc').addEventListener('click', () => { hideLanding(); openEncrypted(); });
 document.getElementById('land-new').addEventListener('click', () => { hideLanding(); blankStart(); });
+document.getElementById('land-final').addEventListener('click', () => { hideLanding(); openFile(); });
+document.getElementById('land-launch').addEventListener('click', () => { hideLanding(); fitZoom(); });
+
+const landDrop = document.getElementById('land-drop');
+landDrop.addEventListener('click', () => { hideLanding(); openFile(); });
+landDrop.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); hideLanding(); openFile(); }
+});
+
+// Highlight the landing page while a file is dragged over the window.
+let dragDepth = 0;
+window.addEventListener('dragenter', () => { if (++dragDepth === 1) landing.classList.add('dragging'); });
+window.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; landing.classList.remove('dragging'); } });
+window.addEventListener('drop', () => { dragDepth = 0; landing.classList.remove('dragging'); });
 
 /* ---------------- Load / blank ------- */
 async function loadFromBuffer(buf, mime) {
@@ -283,10 +322,9 @@ function blankStart() {
   cumulativeAdj = { brightness: 0, contrast: 0, saturation: 0, hue: 0 };
   preFiltersImage = null;
   pushHistory();
-  zoom = 1;
-  applyZoom();
   dropHint.style.display = 'none';
   updateAdjBadges();
+  setTimeout(fitZoom, 0);
 }
 
 /* ---------------- Tools -------------- */
